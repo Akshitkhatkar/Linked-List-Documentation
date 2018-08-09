@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+header{
+  font-weight:bold;
+  font-size:30px;
+}
+@media(min-width:600px)
+{
+#navbar{
+  position: fixed; 
+}
+}
+
+</style>
+
+
+</head>
+<body>
+
+<nav id="navbar">
+<header>Linked List</header> 
+<ul>
+<a class="nav-link" href="#Introduction" rel="internal"><li>Introduction</li></a>
+<a class="nav-link" href="#Array_vs_Linked_List" rel="internal"><li>Array vs Linked List</li></a>
+<a class="nav-link" href="#Linked_List_Insertion" rel="internal"><li>Linked List Insertion</li></a>
+<a class="nav-link" href="#Linked_List_Deletion" rel="internal"><li>Linked List Deletion</li></a>
+<a class="nav-link" href="#Reverse_a_linked_list" rel="internal"><li>Reverse a linked list</li></a>
+</ul>
+</nav>
+<main id="main-doc">
+
+<section class="main-section" id="Introduction">
+<header >Introduction</header>
+<p>Like arrays, Linked List is a linear data structure. Unlike arrays, linked list elements are not stored at contiguous location; the elements are linked using pointers.</p>
+<header id="subhead">Why Linked List?</header>
+<p>Arrays can be used to store linear data of similar types, but arrays have following limitations.</p>
+<ol>
+<li>The size of the arrays is fixed: So we must know the upper limit on the number of elements in advance. Also, generally, the allocated memory is equal to the upper limit irrespective of the usage.</li>
+<li>Inserting a new element in an array of elements is expensive, because room has to be created for the new elements and to create room existing elements have to shifted.</li>
+</ol>
+<code>
+// A linked list node<br/>
+struct Node<br/>
+{<br/>
+  int data;<br/>
+  struct Node *next;<br/>
+};
+</code>
+</section>
+
+<section class="main-section" id="Array_vs_Linked_List">
+<header >Array vs Linked List</header>
+<p>Both Arrays and Linked List can be used to store linear data of similar types, but they both have some advantages and disadvantages over each other.</p>
+<p>Following are the points in favour of Linked Lists.</p>
+<ol>
+<li>The size of the arrays is fixed: So we must know the upper limit on the number of elements in advance. Also, generally, the allocated memory is equal to the upper limit irrespective of the usage, and in practical uses, upper limit is rarely reached.</li>
+<li> Inserting a new element in an array of elements is expensive, because room has to be created for the new elements and to create room existing elements have to shifted.</li>
+</ol>
+<p>Linked lists have following drawbacks:</p>
+<ol>
+<li>Random access is not allowed. We have to access elements sequentially starting from the first node. So we cannot do binary search with linked lists.</li>
+<li>Extra memory space for a pointer is required with each element of the list.</li>
+<li>Arrays have better cache locality that can make a pretty big difference in performance.</li>
+</ol>
+</section>
+
+<section class="main-section" id="Linked_List_Insertion">
+<header >Linked List Insertion</header>
+<p>The new node is always added before the head of the given Linked List. And newly added node becomes the new head of the Linked List. For example if the given Linked List is 10->15->20->25 and we add an item 5 at the front, then the Linked List becomes 5->10->15->20->25. Let us call the function that adds at the front of the list is push(). The push() must receive a pointer to the head pointer, because push must change the head pointer to point to the new node </p>
+<code>
+/* Given a reference (pointer to pointer) to the head of a list<br/>
+   and an int,  inserts a new node on the front of the list. */<br/>
+void push(struct Node** head_ref, int new_data)<br/>
+{<br/>
+    /* 1. allocate node */<br/>
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));<br/>
+  
+    /* 2. put in the data  */<br/>
+    new_node->data  = new_data;<br/>
+  
+    /* 3. Make next of new node as head */<br/>
+    new_node->next = (*head_ref);<br/>
+  
+    /* 4. move the head to point to the new node */<br/>
+    (*head_ref)    = new_node;<br/>
+}<br/>
+
+</code>
+</section>
+
+<section class="main-section" id="Linked_List_Deletion">
+
+<header >Linked List Deletion</header>
+<p>Let us formulate the problem statement to understand the deletion process. Given a ‘key’, delete the first occurrence of this key in linked list.</p>
+<p>To delete a node from linked list, we need to do following steps.</p>
+<ol>
+<li> Find previous node of the node to be deleted.</li>
+<li>Changed next of previous node.</li>
+<li>Free memory for the node to be deleted.</li>
+</ol>
+<code>
+// A complete working C program to demonstrate deletion in singly<br/>
+// linked list<br/>
+#include <stdio.h><br/>
+#include <stdlib.h><br/>
+ 
+// A linked list node<br/>
+struct Node<br/>
+{<br/>
+    int data;<br/>
+    struct Node *next;<br/>
+};<br/>
+ 
+/* Given a reference (pointer to pointer) to the head of a list<br/>
+   and an int, inserts a new node on the front of the list. */<br/>
+void push(struct Node** head_ref, int new_data)<br/>
+{<br/>
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));<br/>
+    new_node->data  = new_data;<br/>
+    new_node->next = (*head_ref);<br/>
+    (*head_ref)    = new_node;<br/>
+}<br/>
+ 
+/* Given a reference (pointer to pointer) to the head of a list<br/>
+   and a key, deletes the first occurrence of key in linked list */<br/>
+void deleteNode(struct Node **head_ref, int key)<br/>
+{<br/>
+    // Store head node<br/>
+    struct Node* temp = *head_ref, *prev;<br/>
+ 
+    // If head node itself holds the key to be deleted<br/>
+    if (temp != NULL && temp->data == key)<br/>
+    {<br/>
+        *head_ref = temp->next;   // Changed head<br/>
+        free(temp);               // free old head<br/>
+        return;<br/>
+    }<br/>
+ 
+    // Search for the key to be deleted, keep track of the<br/>
+    // previous node as we need to change 'prev->next'<br/>
+    while (temp != NULL && temp->data != key)<br/>
+    {<br/>
+        prev = temp;<br/>
+        temp = temp->next;<br/>
+    }<br/>
+ 
+    // If key was not present in linked list<br/>
+    if (temp == NULL) return;<br/>
+ 
+    // Unlink the node from linked list<br/>
+    prev->next = temp->next;<br/>
+ 
+    free(temp);  // Free memory<br/>
+</code>
+</section>
+
+<section class="main-section" id="Reverse_a_linked_list">
+
+<header >Reverse a linked list</header>
+<p>Given pointer to the head node of a linked list, the task is to reverse the linked list. We need to reverse the list by changing links between nodes.</p>
+<p>Examples:</p>
+<code>
+Input : Head of following linked list  <br/>
+       1->2->3->4->NULL<br/>
+Output : Linked list should be changed to,<br/>
+       4->3->2->1->NULL<br/><br/>
+
+Input : Head of following linked list  <br/>
+       1->2->3->4->5->NULL<br/>
+Output : Linked list should be changed to,<br/>
+       5->4->3->2->1->NULL<br/><br/>
+
+Input : NULL<br/>
+Output : NULL<br/><br/>
+
+Input  : 1->NULL<br/>
+Output : 1->NULL<br/>
+
+</code>
+<code> /* Function to reverse the linked list */<br/>
+    void reverse()<br/>
+    {<br/>
+        // Initialize current, previous and<br/>
+        // next pointers<br/>
+        Node *current = head;<br/>
+        Node *prev = NULL, *next = NULL;<br/>
+ 
+ 
+        while (current != NULL)<br/>
+        {<br/>
+            // Store next<br/>
+            next = current->next;<br/>
+ 
+            // Reverse current node's pointer<br/>
+            current->next = prev;<br/>
+ 
+            // Move pointers one position ahead.<br/>
+            prev = current;<br/>
+            current = next;<br/>
+        }<br/>
+        head = prev;<br/>
+    }<br/>
+ </code>
+</section>
+
+
+
+</main>
+
+</body>
+
+</html>
